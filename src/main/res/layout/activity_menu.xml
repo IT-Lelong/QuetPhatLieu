@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#41A5E9"
+    tools:context=".Menu">
+
+    <TextView
+        android:id="@+id/viewWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:text="@string/menu_welcome"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/menuID"
+        android:layout_width="332dp"
+        android:layout_height="81dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Disconnect"
+        android:textSize="17sp"
+        app:layout_constraintLeft_toRightOf="@+id/viewWelcome"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnQR210"
+        android:layout_width="170dp"
+        android:layout_height="50dp"
+        android:layout_margin="5sp"
+        android:background="@drawable/button_type1"
+        android:text="@string/menu_btn01"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnQR230"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btnQR230"
+        app:layout_constraintTop_toTopOf="@+id/btnQR230"
+        app:layout_constraintVertical_bias="0.0"
+        android:enabled="false"/>
+
+    <Button
+        android:id="@+id/btnQR230"
+        android:layout_width="170sp"
+        android:layout_height="50sp"
+        android:layout_margin="5sp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_type1"
+        android:text="@string/menu_btn02"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/btnQR210"
+        app:layout_constraintTop_toBottomOf="@+id/menuID"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/btnprint"
+        android:layout_width="170sp"
+        android:layout_height="50sp"
+        android:layout_margin="5sp"
+        android:background="@drawable/button_type1"
+        android:text="@string/btnQRcodePrint"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/btnQR210"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnQR210"
+        app:layout_constraintTop_toBottomOf="@+id/btnQR210" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
