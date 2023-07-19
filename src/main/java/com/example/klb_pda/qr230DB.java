@@ -23,6 +23,8 @@ public class qr230DB {
     String qr230_08 = "qr230_08"; //發出儲位
     String qr230_09 = "qr230_09"; //發出批號
     String qr230_10 = "qr230_10"; //物料名增
+    String qr230_11 = "qr230_11"; //發出日期
+    String qr230_12 = "qr230_12"; //發出時間
 
     String TABLE_NAME2 = "qr230b_table";
     String qr230b_01 = "qr230b_01"; //項次
@@ -33,12 +35,15 @@ public class qr230DB {
     String qr230b_06 = "qr230b_06"; //驗收狀況
     String qr230b_07 = "qr230b_07"; //明細項目
 
-    String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" + qr230_01 + " INTEGER," + qr230_02 + " TEXT," + qr230_03 + " TEXT," +
+    String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
+            qr230_01 + " INTEGER," + qr230_02 + " TEXT," + qr230_03 + " TEXT," +
             qr230_04 + " DOUBLE," + qr230_05 + " DOUBLE," + qr230_06 + " DOUBLE," +
-            qr230_07 + " TEXT," + qr230_08 + " TEXT," + qr230_09 + " TEXT," + qr230_10 + " TEXT," + " PRIMARY KEY(qr230_01))";
+            qr230_07 + " TEXT," + qr230_08 + " TEXT," + qr230_09 + " TEXT," +
+            qr230_10 + " TEXT," + qr230_11 + " TEXT," + qr230_12 + " TEXT," + " PRIMARY KEY(qr230_01))";
 
     String CREATE_TABLE2 = "CREATE TABLE " + TABLE_NAME2 + " (" + qr230b_01 + " INTEGER," + qr230b_02 + " TEXT," + qr230b_03 + " TEXT," +
             qr230b_04 + " TEXT," + qr230b_05 + " DOUBLE," + qr230b_06 + " TEXT," + qr230b_07 + " INTEGER)";
+
     private Context mCtx = null;
 
     public qr230DB(Context ctx) {
@@ -47,6 +52,9 @@ public class qr230DB {
 
     public void open() throws SQLException {
         db = mCtx.openOrCreateDatabase(DATABASE_NAME, 0, null);
+    }
+
+    public void createtable() {
         try {
             db.execSQL(CREATE_TABLE);
             db.execSQL(CREATE_TABLE2);
@@ -127,20 +135,24 @@ public class qr230DB {
     public String scan(String xqr230b_02, String xqr230b_03, String xqr230b_04, Double xqr230b_05) {
         try {
             //確認是否有此品號
-            if (xqr230b_04.equals("NULL")) {
-
+            if (!xqr230b_04.equals("NULL")) {
+                Cursor c_soloDonDK = db.rawQuery("SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " WHERE qr230_02='" + xqr230b_03 + "' ORDER BY qr230_01", null);
             }
+
             Cursor c = db.rawQuery("SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " WHERE qr230_02='" + xqr230b_03 + "' ORDER BY qr230_01", null);
             c.moveToFirst();
             Integer tcount = c.getInt(0);
             c.close();
             if (tcount > 0) {
                 //檢查掃描數量是否超過
-                Cursor c1 = db.rawQuery("SELECT qr230_01,qr230_04,qr230_05 FROM " + TABLE_NAME +
-                        " WHERE qr230_02='" + xqr230b_03 + "' AND qr230_04 > qr230_05 AND qr230_04 - qr230_05 >= " + xqr230b_05 + " ORDER BY qr230_01", null);
+                Cursor c1 = db.rawQuery(" SELECT qr230_01,qr230_04,qr230_05 FROM " + TABLE_NAME +
+                                            " WHERE qr230_02='" + xqr230b_03 + "' AND qr230_04 > qr230_05 AND qr230_04 - qr230_05 >= " + xqr230b_05 + " ORDER BY qr230_01",
+                                        null);
+
                 if (c1.getCount() == 0) {
                     return "OVERQTY";
                 }
+
                 c1.moveToFirst();
                 Integer tqr230_01 = c1.getInt(0); //項次
                 Double tqr230_04 = c1.getDouble(1); //應掃數量
@@ -153,6 +165,7 @@ public class qr230DB {
                     String[] selectionArgs = new String[]{xqr230b_03, String.valueOf(tqr230_01)};
                     Cursor g_curs = db.query(TABLE_NAME2, str_sel, selection, selectionArgs, null, null, null);
                     g_curs.moveToFirst();
+
                     if (g_curs.isNull(0)) {
                         g_qr230b_07 = 1;
                     } else {
@@ -162,7 +175,8 @@ public class qr230DB {
 
                     db.execSQL("UPDATE " + TABLE_NAME + " SET qr230_05=qr230_05+" + xqr230b_05 + " WHERE qr230_01=" + tqr230_01);
                     db.execSQL("INSERT INTO " + TABLE_NAME2 + " (qr230b_01,qr230b_02,qr230b_03,qr230b_04,qr230b_05,qr230b_06,qr230b_07) " +
-                            "VALUES(" + tqr230_01 + ",'" + xqr230b_02 + "','" + xqr230b_03 + "','" + xqr230b_04 + "'," + xqr230b_05 + ",'false','" + g_qr230b_07 + "')");
+                               "VALUES(" + tqr230_01 + ",'" + xqr230b_02 + "','" + xqr230b_03 + "','" + xqr230b_04 + "'," + xqr230b_05 + ",'false','" + g_qr230b_07 + "')");
+
                     return "TRUE";
                 } else {
                     return "OVERQTY";

@@ -72,7 +72,8 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
         db = new qr230DB(this);
         db.open();
         db.close();
-        db.open();
+        db.createtable();
+
         Bundle getbundle = getIntent().getExtras();
         ID = getbundle.getString("ID");
         g_server = getbundle.getString("SERVER");
@@ -166,9 +167,9 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                 } catch (ScannerException e) {
                     e.printStackTrace();
                 }
-                updatedetail(dataStr);
+                updatedetail(dataStr); //Quét code vật liệu
             } else {
-                updateData(dataStr);
+                updateData(dataStr); //Quét đơn
             }
 
         }
@@ -661,6 +662,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                     public void onClick(DialogInterface dialogInterface, int i) {
                         db.close();
                         db.open();
+                        db.createtable();
                         uiHandler.sendEmptyMessage(1);
                     }
                 });
@@ -829,7 +831,6 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                         UpdateAdapter(getdetail);
                         scanner.enable();
                     } catch (Exception e) {
-
                     }
                     break;
                 //資料清除
@@ -837,12 +838,12 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                     try {
                         db.close();
                         db.open();
+                        db.createtable();
                         head1.setText("");
                         Cursor getdetail = db.getdetail();
                         UpdateAdapter(getdetail);
                         scanner.enable();
                     } catch (Exception e) {
-
                     }
                     break;
                 //掃描標籤
@@ -852,7 +853,6 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                         UpdateAdapter(getdetail);
                         scanner.enable();
                     } catch (Exception e) {
-
                     }
                     break;
 
