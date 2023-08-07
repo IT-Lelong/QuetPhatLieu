@@ -77,6 +77,12 @@
     <string name="qr230_title3">Số Lô\nSL phải quét\nSL đã quét</string>
     <string name="qr230_btn01">Tải lên\nhệ thống</string>
     <string name="qr230_btn02">Xóa\ntất cả</string>
+
+    <string name="qr230_title4">Hạng mục</string>
+    <string name="qr230_title5">Số\nlượng</string>
+    <string name="qr230_title6">Người quét\nThời gian quét</string>
+
+
     /* message_qr230 */
     <string name="qr230_msg01">Tra cứu phiếu điều kho thất bại</string>
     <string name="qr230_msg02">Phiếu điều kho này không cần quét</string>
@@ -95,4 +101,7 @@
     <string name="label_split">Số tờ tem muốn tách</string>
 
     <string name="E23">Mã vạch không thuộc vật liệu trong kho</string>
+
+    /*QR Query*/
+    <string name="btnquery">Tra cứu tình trạng\ntem phát liệu</string>
 </resources>

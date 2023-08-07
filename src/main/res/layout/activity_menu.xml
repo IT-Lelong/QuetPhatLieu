@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -73,6 +74,22 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="@+id/btnQR210"
         app:layout_constraintTop_toBottomOf="@+id/btnQR210" />
+
+    <Button
+        android:id="@+id/btnquery"
+        android:layout_width="170sp"
+        android:layout_height="50sp"
+        android:layout_margin="5sp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button_type1"
+        android:text="@string/btnquery"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@+id/btnprint"
+        app:layout_constraintTop_toBottomOf="@+id/btnQR230"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
 
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,18 +14,18 @@ public class qr230DB {
     public SQLiteDatabase db = null;
     String DATABASE_NAME = "qr230DB.db";
     String TABLE_NAME = "qr230_table";
-    String qr230_01 = "qr230_01"; //項次
-    String qr230_02 = "qr230_02"; //料號
-    String qr230_03 = "qr230_03"; //規格
-    String qr230_04 = "qr230_04"; //應掃數量
-    String qr230_05 = "qr230_05"; //已掃數量
-    String qr230_06 = "qr230_06"; //已驗收量
-    String qr230_07 = "qr230_07"; //發出倉庫
-    String qr230_08 = "qr230_08"; //發出儲位
-    String qr230_09 = "qr230_09"; //發出批號
-    String qr230_10 = "qr230_10"; //物料名增
-    String qr230_11 = "qr230_11"; //發出日期
-    String qr230_12 = "qr230_12"; //發出時間
+    String qr230_01 = "qr230_01"; //項次 Thứ hạng
+    String qr230_02 = "qr230_02"; //料號 Số vật liệu
+    String qr230_03 = "qr230_03"; //規格 Thông số kỹ thuật
+    String qr230_04 = "qr230_04"; //應掃數量 Số lượng nên được quét
+    String qr230_05 = "qr230_05"; //已掃數量 Số lượng đã được quét
+    String qr230_06 = "qr230_06"; //已驗收量 Khối lượng đã được chấp nhận
+    String qr230_07 = "qr230_07"; //發出倉庫 Phát hành kho
+    String qr230_08 = "qr230_08"; //發出儲位 Phát hành vị trí lưu trữ
+    String qr230_09 = "qr230_09"; //發出批號 Phát hành số lô
+    String qr230_10 = "qr230_10"; //物料名增 Tên mục tăng lên
+    String qr230_11 = "qr230_11"; //發出日期 Ngày phát hành
+    String qr230_12 = "qr230_12"; //發出時間 Thời gian phát hành
 
     String TABLE_NAME2 = "qr230b_table";
     String qr230b_01 = "qr230b_01"; //項次
@@ -34,15 +35,28 @@ public class qr230DB {
     String qr230b_05 = "qr230b_05"; //數量
     String qr230b_06 = "qr230b_06"; //驗收狀況
     String qr230b_07 = "qr230b_07"; //明細項目
+    String qr230b_08 = "qr230b_08"; //Ngay quet
+    String qr230b_09 = "qr230b_09"; //Nguoi quet
 
-    String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
+    /*String TABLE_NAME_QR = "qr230qr_table";
+    String qr230qr_01 = "qr230qr_01"; //stt
+    String qr230qr_02 = "qr230qr_02"; //Mã đơn phát hàng
+    String qr230qr_03 = "qr230qr_03"; //hạng mục
+    String qr230qr_04 = "qr230qr_04"; //Mã tem
+    String qr230qr_05 = "qr230qr_05"; //Mã vật liệu
+    String qr230qr_06 = "qr230qr_06"; //Tên quy cách
+    String qr230qr_07 = "qr230qr_07"; //Ngay quet
+    String qr230qr_08 = "qr230qr_08"; //Nguoi quet
+    String qr230qr_09 = "qr230qr_09"; //Số lượng*/
+
+    String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
             qr230_01 + " INTEGER," + qr230_02 + " TEXT," + qr230_03 + " TEXT," +
             qr230_04 + " DOUBLE," + qr230_05 + " DOUBLE," + qr230_06 + " DOUBLE," +
             qr230_07 + " TEXT," + qr230_08 + " TEXT," + qr230_09 + " TEXT," +
             qr230_10 + " TEXT," + qr230_11 + " TEXT," + qr230_12 + " TEXT," + " PRIMARY KEY(qr230_01))";
 
-    String CREATE_TABLE2 = "CREATE TABLE " + TABLE_NAME2 + " (" + qr230b_01 + " INTEGER," + qr230b_02 + " TEXT," + qr230b_03 + " TEXT," +
-            qr230b_04 + " TEXT," + qr230b_05 + " DOUBLE," + qr230b_06 + " TEXT," + qr230b_07 + " INTEGER)";
+    String CREATE_TABLE2 = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " (" + qr230b_01 + " INTEGER," + qr230b_02 + " TEXT," + qr230b_03 + " TEXT," +
+            qr230b_04 + " TEXT," + qr230b_05 + " DOUBLE," + qr230b_06 + " TEXT," + qr230b_07 + " INTEGER," + qr230b_08 + " TEXT," + qr230b_09 + " TEXT)";
 
     private Context mCtx = null;
 
@@ -59,7 +73,7 @@ public class qr230DB {
             db.execSQL(CREATE_TABLE);
             db.execSQL(CREATE_TABLE2);
         } catch (Exception e) {
-
+            Toast.makeText(mCtx, e.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -114,6 +128,8 @@ public class qr230DB {
                 Double xqr230b_05 = data.getDouble("QR_IMN06");
                 String xqr230b_06 = data.getString("QR_IMN08");
                 Integer xqr230b_07 = data.getInt("QR_IMN09");
+                String xqr230b_08 = data.getString("QR_IMN12");
+                String xqr230b_09 = data.getString("QR_IMN07");
                 ContentValues args = new ContentValues();
 
                 args.put(qr230b_01, xqr230b_01);
@@ -123,6 +139,8 @@ public class qr230DB {
                 args.put(qr230b_05, xqr230b_05);
                 args.put(qr230b_06, xqr230b_06);
                 args.put(qr230b_07, xqr230b_07);
+                args.put(qr230b_08, xqr230b_08);
+                args.put(qr230b_09, xqr230b_09);
                 db.insert(TABLE_NAME2, null, args);
             }
             return "TRUE";
@@ -131,13 +149,20 @@ public class qr230DB {
         }
     }
 
+
     //QR_code,MVL,Số Lô, Số Lượng
-    public String scan(String xqr230b_02, String xqr230b_03, String xqr230b_04, Double xqr230b_05) {
+    public String scan(String xqr230b_02, String xqr230b_03, String xqr230b_04, Double xqr230b_05, String xqr230b_06, String xqr230b_07) {
         try {
             //確認是否有此品號
-            if (!xqr230b_04.equals("NULL")) {
-                Cursor c_soloDonDK = db.rawQuery("SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " WHERE qr230_02='" + xqr230b_03 + "' ORDER BY qr230_01", null);
+            //if (!xqr230b_04.equals("NULL")) {
+            Cursor c_soloDonDK = db.rawQuery("SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " WHERE qr230_02='" + xqr230b_03 + "'  AND qr230_09 ='" + xqr230b_04 + "' ORDER BY qr230_01", null);
+            c_soloDonDK.moveToFirst();
+            Integer solo_count = c_soloDonDK.getInt(0);
+            c_soloDonDK.close();
+            if (solo_count > 0) {
+                return "SAISOLO";
             }
+            //}
 
             Cursor c = db.rawQuery("SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " WHERE qr230_02='" + xqr230b_03 + "' ORDER BY qr230_01", null);
             c.moveToFirst();
@@ -146,8 +171,8 @@ public class qr230DB {
             if (tcount > 0) {
                 //檢查掃描數量是否超過
                 Cursor c1 = db.rawQuery(" SELECT qr230_01,qr230_04,qr230_05 FROM " + TABLE_NAME +
-                                            " WHERE qr230_02='" + xqr230b_03 + "' AND qr230_04 > qr230_05 AND qr230_04 - qr230_05 >= " + xqr230b_05 + " ORDER BY qr230_01",
-                                        null);
+                                " WHERE qr230_02='" + xqr230b_03 + "' AND qr230_04 > qr230_05 AND qr230_04 - qr230_05 >= " + xqr230b_05 + " ORDER BY qr230_01",
+                        null);
 
                 if (c1.getCount() == 0) {
                     return "OVERQTY";
@@ -174,8 +199,8 @@ public class qr230DB {
                     //取得最大的明細項目(E)
 
                     db.execSQL("UPDATE " + TABLE_NAME + " SET qr230_05=qr230_05+" + xqr230b_05 + " WHERE qr230_01=" + tqr230_01);
-                    db.execSQL("INSERT INTO " + TABLE_NAME2 + " (qr230b_01,qr230b_02,qr230b_03,qr230b_04,qr230b_05,qr230b_06,qr230b_07) " +
-                               "VALUES(" + tqr230_01 + ",'" + xqr230b_02 + "','" + xqr230b_03 + "','" + xqr230b_04 + "'," + xqr230b_05 + ",'false','" + g_qr230b_07 + "')");
+                    db.execSQL("INSERT INTO " + TABLE_NAME2 + " (qr230b_01,qr230b_02,qr230b_03,qr230b_04,qr230b_05,qr230b_06,qr230b_07,qr230b_08,qr230b_09) " +
+                            "VALUES(" + tqr230_01 + ",'" + xqr230b_02 + "','" + xqr230b_03 + "','" + xqr230b_04 + "'," + xqr230b_05 + ",'false','" + g_qr230b_07 + "','" + xqr230b_06 + "','" + xqr230b_07 + "')");
 
                     return "TRUE";
                 } else {

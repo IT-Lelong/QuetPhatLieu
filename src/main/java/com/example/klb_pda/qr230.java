@@ -44,14 +44,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener, StatusListener, DataListener {
     private EMDKManager emdkManager = null;
     private BarcodeManager barcodeManager = null;
     private Scanner scanner = null;
-    String ID, g_server;
+    String ID, g_server,l_ngay;
     TextView head1;
     ListView list01;
     Button btnupload, btnclear;
@@ -62,7 +64,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
     qr230DB db = null;
     private CheckAppUpdate checkAppUpdate = null;
     DecimalFormat decimalFormat;
-
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +73,6 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
         actionBar.hide();
         db = new qr230DB(this);
         db.open();
-        db.close();
         db.createtable();
 
         Bundle getbundle = getIntent().getExtras();
@@ -90,7 +91,6 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
         String pattern = "###,###,###.##";
         decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
         decimalFormat.applyPattern(pattern);
-
         EMDKResults results = EMDKManager.getEMDKManager(getApplicationContext(), this);
         if (results.statusCode != EMDKResults.STATUS_CODE.SUCCESS) {
             //statusTextView.setText("EMDKManager Request Failed");
@@ -348,6 +348,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                         }
                     }
                 } catch (Exception e) {
+                    Toast.makeText(qr230.this, e.toString(), Toast.LENGTH_SHORT).show();
                     qr230.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -394,7 +395,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                     qr03 = Double.valueOf(datastr.substring(index3 + 1));
                 }
 
-                scan(datastr, qr01, qr02, qr03);
+                scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
 
             } else if (datastr.substring(0, 5).equals("BC525") || datastr.substring(0, 5).equals("BC527") || datastr.substring(0, 5).equals("BB525") || datastr.substring(0, 5).equals("BB527")) {
                 Thread api = new Thread(new Runnable() {
@@ -420,7 +421,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                             //取得數量
                             qr03 = Double.valueOf(datastr.substring(index3 + 1));
                         }
-                        scan(datastr, qr01, qr02, qr03);
+                        scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
                     }
                 });
                 api.start();
@@ -473,7 +474,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                             qr03 = Double.valueOf(datastr.substring(index1 + 1, index2));
                         }
 
-                        scan(datastr, qr01, qr02, qr03);
+                        scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
                     }
                 });
                 api.start();
@@ -489,7 +490,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                 String qr02 = datastr.substring(index3 + 1, index4);
                 //取得數量
                 Double qr03 = Double.valueOf(datastr.substring(index4 + 1));
-                scan(datastr, qr01, qr02, qr03);
+                scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
             } else {
                 qr230.this.runOnUiThread(new Runnable() {
                     @Override
@@ -513,9 +514,9 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
     }
 
     //QR_code,MVL,Số Lô, Số Lượng
-    private void scan(String xqr230b_02, String xqr230b_03, String xqr230b_04, Double xqr230b_05) {
+    private void scan(String xqr230b_02, String xqr230b_03, String xqr230b_04, Double xqr230b_05, String xqr230b_06, String xqr230b_07) {
         try {
-            String result = db.scan(xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05);
+            String result = db.scan(xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07);
             if (result.equals("FALSE")) {
                 qr230.this.runOnUiThread(new Runnable() {
                     @Override
@@ -644,8 +645,6 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
     private View.OnClickListener btnclearlistener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            checkAppUpdate = new CheckAppUpdate(getApplicationContext(),g_server);
-            checkAppUpdate.checkVersion();
             if (head1.getText().length() > 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(qr230.this);
                 builder.setCancelable(false);

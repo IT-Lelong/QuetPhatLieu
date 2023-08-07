@@ -78,6 +78,10 @@
     <string name="qr230_btn01">上傳</string>
     <string name="qr230_btn02">清除</string>
 
+    <string name="qr230_title4">項目</string>
+    <string name="qr230_title5">數量</string>
+    <string name="qr230_title6">發料人員\n發料時間</string>
+
     /* message_qr230 */
     <string name="qr230_msg01">調撥單查詢失敗</string>
     <string name="qr230_msg02">此調撥單無需掃描</string>
@@ -96,4 +100,7 @@
     <string name="label_split">標籤要拆張數</string>
 
     <string name="E23">無此標籤</string>
+
+    /*QR Query*/
+    <string name="btnquery">發料標籤狀況查詢</string>
 </resources>

@@ -20,7 +20,7 @@ import java.net.URL;
 public class Menu extends AppCompatActivity {
 
     String g_server = "";
-    Button btnQR210, btnQR230, btnprint;
+    Button btnQR210, btnQR230, btnprint,btnquery;
     TextView menuID;
     String ID;
     private CheckAppUpdate checkAppUpdate = null;
@@ -33,17 +33,19 @@ public class Menu extends AppCompatActivity {
         actionBar.hide();
 
         Bundle getbundle = getIntent().getExtras();
-        ID = getbundle.getString("ID");
-        g_server = getbundle.getString("SERVER");
+        ID = Constant_Class.UserID;
+        g_server = Constant_Class.server;
         btnQR210 = (Button) findViewById(R.id.btnQR210);
         btnQR230 = (Button) findViewById(R.id.btnQR230);
         menuID = (TextView) findViewById(R.id.menuID);
         btnprint = (Button) findViewById(R.id.btnprint);
+        btnquery = (Button) findViewById(R.id.btnquery);
 
 
         btnQR210.setOnClickListener(btnlistener);
         btnQR230.setOnClickListener(btnlistener);
         btnprint.setOnClickListener(btnlistener);
+        btnquery.setOnClickListener(btnlistener);
 
 
         getIDname("http://172.16.40.20/" + g_server + "/getid.php?ID=" + ID);
@@ -52,7 +54,7 @@ public class Menu extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkAppUpdate = new CheckAppUpdate(this,g_server);
+        checkAppUpdate = new CheckAppUpdate(this);
         checkAppUpdate.checkVersion();
     }
 
@@ -74,6 +76,7 @@ public class Menu extends AppCompatActivity {
                     result = reader.readLine();
                     reader.close();
                     result = result.replaceAll("-", "\n");
+
                     menuID.setText(result);
                 } catch (Exception e) {
                     Toast alert = Toast.makeText(Menu.this, e.toString(), Toast.LENGTH_LONG);
@@ -132,6 +135,18 @@ public class Menu extends AppCompatActivity {
                         Toast alert = Toast.makeText(Menu.this, e.toString(), Toast.LENGTH_LONG);
                         alert.show();
                     }
+                    break;
+                }
+                case R.id.btnquery: {
+                    try {
+                        Intent QR230 = new Intent();
+                        QR230.setClass(Menu.this, CheckDateTime.class);
+                        startActivity(QR230);
+                    } catch (Exception e) {
+                        Toast alert = Toast.makeText(Menu.this, e.toString(), Toast.LENGTH_LONG);
+                        alert.show();
+                    }
+
                     break;
                 }
             }

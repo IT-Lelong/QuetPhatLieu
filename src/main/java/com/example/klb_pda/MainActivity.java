@@ -45,6 +45,7 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.H
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpGet;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,6 +57,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editID, editPassword;
     CheckBox onlinecheck, SaveCheck;
     TextView tv_ver;
-    String g_server = "PHP";
+    String g_package = "";
     Locale locale;
     String ID, PASSWORD;
     String TABLE_NAME = "acc_table";
@@ -73,17 +76,33 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase db = null;
     private CheckAppUpdate checkAppUpdate = null;
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_CAMERA_PERMISSION = 2;
+    private static final int REQUEST_UNKNOWN_SOURCES = 3;
+
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static String[] PERMISSIONS_CAMERA = {
+            Manifest.permission.CAMERA
+    };
+    private static String[] PERMISSIONS_UNKNOWN_SOURCES = {
+            Manifest.permission.REQUEST_INSTALL_PACKAGES
+    };
+    private int permissionIndex = 0;
+    private String[][] permissions = {PERMISSIONS_STORAGE, PERMISSIONS_CAMERA, PERMISSIONS_UNKNOWN_SOURCES};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setLanguage();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        verifyStoragePermissions(MainActivity.this);
-
-        checkAppUpdate = new CheckAppUpdate(this,g_server);
+        g_package = this.getPackageName().toString();
+        checkAppUpdate = new CheckAppUpdate(this);
         checkAppUpdate.checkVersion();
 
         String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + accID + " TEXT," + pass + " TEXT)";
@@ -119,9 +138,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            String verCode = String.valueOf(this.getPackageManager().getPackageInfo("com.example.klb_pda", 0).versionCode);
-            String verName = this.getPackageManager().getPackageInfo("com.example.klb_pda", 0).versionName;
-            tv_ver.setText("VerCode: "+ verCode + " VerName: "+ verName);
+            String verCode = String.valueOf(this.getPackageManager().getPackageInfo(g_package, 0).versionCode);
+            String verName = this.getPackageManager().getPackageInfo(g_package, 0).versionName;
+            tv_ver.setText("SV: "+ Constant_Class.server +" VerCode: " + verCode + " VerName: " + verName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -130,45 +149,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Storage Permissions (S)
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkPermissions();
+    }
 
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
+    public void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissionAtIndex(permissionIndex);
         }
     }
 
-    private static final int REQUEST_WRITE_PERMISSION = 786;
+    private void requestPermissionAtIndex(int index) {
+        if (index < permissions.length) {
+            String[] permissionGroup = permissions[index];
+            boolean allPermissionsGranted = true;
+            List<String> permissionsToRequest = new ArrayList<>();
+
+            for (String permission : permissionGroup) {
+                if (permission.equals(PERMISSIONS_UNKNOWN_SOURCES[0])) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !getPackageManager().canRequestPackageInstalls()) {
+                        // Xử lý riêng cho nhóm PERMISSIONS_UNKNOWN_SOURCES
+                        // Tạo Intent để mở cài đặt quyền hạn
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivityForResult(intent, REQUEST_UNKNOWN_SOURCES);
+                    }
+                } else {
+                    if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                        allPermissionsGranted = false;
+                        permissionsToRequest.add(permission);
+                    }
+                }
+            }
+
+            if (!allPermissionsGranted) {
+                String[] permissionsArray = permissionsToRequest.toArray(new String[permissionsToRequest.size()]);
+                requestPermissions(permissionsArray, index);
+            } else {
+                // Quyền hạn đã được cấp, tiến hành yêu cầu quyền tiếp theo
+                permissionIndex++;
+                requestPermissionAtIndex(permissionIndex);
+            }
+        } else {
+            // Đã yêu cầu hết các quyền hạn, thực hiện các hành động tiếp theo
+            checkAppUpdate = new CheckAppUpdate(this);
+            checkAppUpdate.checkVersion();
+        }
+    }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,String[] permissions,int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
-    }
 
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
+        if (requestCode == permissionIndex && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Quyền hạn đã được cấp, tiến hành yêu cầu quyền tiếp theo
+            permissionIndex++;
+            requestPermissionAtIndex(permissionIndex);
+        } else {
+            // Quyền hạn không được cấp, xử lý theo yêu cầu của bạn
+        }
     }
-
-    private boolean canReadWriteExternal() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
-    }
-
     // Storage Permissions (E)
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -190,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                     login.setClass(MainActivity.this, Menu.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("ID", editID.getText().toString());
-                    bundle.putString("SERVER", g_server);
                     login.putExtras(bundle);
                     startActivity(login);
                 } else {
@@ -198,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                     alert.show();
                 }
             } else {
-                login("http://172.16.40.20/" + g_server + "/login.php?ID=" + ID + "&PASSWORD=" + PASSWORD);
+                login("http://172.16.40.20/" + Constant_Class.server + "/loginJson.php?ID=" + ID + "&PASSWORD=" + PASSWORD);
             }
         }
     };
@@ -227,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
                     String result = reader.readLine();
                     reader.close();
-                    if (result.equals("pass")) {
+                    if (result.contains("PASS")) {
                         if (SaveCheck.isChecked()) {
                             db.execSQL("DELETE FROM " + TABLE_NAME + "");
                             ContentValues args = new ContentValues();
@@ -238,14 +282,25 @@ public class MainActivity extends AppCompatActivity {
                             db.execSQL("DELETE FROM " + TABLE_NAME + "");
                         }
 
+                        try{
+                            JSONArray jsonarray = new JSONArray(result);
+                            for (int i = 0; i < jsonarray.length(); i++) {
+                                JSONObject jsonObject = jsonarray.getJSONObject(i);
+                                Constant_Class.UserXuong = jsonObject.getString("TC_QRH003");
+                                Constant_Class.UserKhau= jsonObject.getString("TC_QRH005");
+                                Constant_Class.UserTramQR = jsonObject.getString("TC_QRH006");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                         Intent login = new Intent();
                         login.setClass(MainActivity.this, Menu.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("ID", editID.getText().toString());
-                        bundle.putString("SERVER", g_server);
                         login.putExtras(bundle);
                         startActivity(login);
-                    } else if (result.equals("error")) {
+                    } else if (result.contains("FALSE")) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -253,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
                                 alert.show();
                             }
                         });
-
                     } else {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -262,7 +316,6 @@ public class MainActivity extends AppCompatActivity {
                                 alert.show();
                             }
                         });
-
                     }
                 } catch (Exception e) {
                     runOnUiThread(new Runnable() {
@@ -272,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
                             alert.show();
                         }
                     });
-
                 }
             }
         }).start();
@@ -326,5 +378,4 @@ public class MainActivity extends AppCompatActivity {
         }
         resources.updateConfiguration(configuration, displayMetrics);
     }
-
 }
