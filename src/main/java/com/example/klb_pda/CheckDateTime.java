@@ -1,32 +1,34 @@
 package com.example.klb_pda;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.google.android.gms.common.api.internal.zach;
 import com.symbol.emdk.EMDKManager;
 import com.symbol.emdk.EMDKResults;
 import com.symbol.emdk.barcode.BarcodeManager;
 import com.symbol.emdk.barcode.ScanDataCollection;
 import com.symbol.emdk.barcode.Scanner;
-import com.symbol.emdk.barcode.Scanner.DataListener;
-import com.symbol.emdk.barcode.Scanner.StatusListener;
 import com.symbol.emdk.barcode.ScannerConfig;
 import com.symbol.emdk.barcode.ScannerException;
 import com.symbol.emdk.barcode.ScannerResults;
 import com.symbol.emdk.barcode.StatusData;
+import com.symbol.emdk.barcode.Scanner.DataListener;
+import com.symbol.emdk.barcode.Scanner.StatusListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,16 +48,19 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
     private EMDKManager emdkManager = null;
     private BarcodeManager barcodeManager = null;
     private Scanner scanner = null;
-    String ID, g_server;
+    String ID, g_server, l_ngay;
     TextView head1;
+    ListView list01;
+    Button btnupload, btnclear;
     UIHandler uiHandler;
     JSONObject ujsonobject;
+    JSONArray ujsonArray;
+    ListView dialoglist01;
     qr230DB db = null;
     private CheckAppUpdate checkAppUpdate = null;
     DecimalFormat decimalFormat;
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    ListView lv_checkdate;
-    ArrayList<CheckDT_List> dsCheckDTS;
+    ArrayList<List_CheckDT> dsCheckDTS;
     CheckDT_Adapter checkDateTimeAdapter;
 
     @Override
@@ -66,30 +71,33 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
         actionBar.hide();
         db = new qr230DB(this);
         db.open();
+        //db.close();
         db.createtable();
 
-        ID = Constant_Class.UserID;
-        g_server = Constant_Class.server;
+        Bundle getbundle = getIntent().getExtras();
+        ID = getbundle.getString("ID");
+        g_server = getbundle.getString("SERVER");
+        list01 = (ListView) findViewById(R.id.lv_check_dt);
         uiHandler = new UIHandler();
 
         Locale locale = new Locale("en", "EN");
         String pattern = "###,###,###.##";
         decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(locale);
         decimalFormat.applyPattern(pattern);
-
+        //mangLVDT = new ArrayList<List_CheckDT>();
         EMDKResults results = EMDKManager.getEMDKManager(getApplicationContext(), this);
         if (results.statusCode != EMDKResults.STATUS_CODE.SUCCESS) {
             //statusTextView.setText("EMDKManager Request Failed");
             updateStatus("EMDKManager Request Failed");
         }
 
-        lv_checkdate = (ListView) findViewById(R.id.lv_check_dt);
+
         dsCheckDTS = new ArrayList<>();
 
         checkDateTimeAdapter = new CheckDT_Adapter(CheckDateTime.this,
-                R.layout.activity_check_date_time_row,
+                R.layout.checkdt_row,
                 dsCheckDTS);
-        lv_checkdate.setAdapter(checkDateTimeAdapter);
+        list01.setAdapter(checkDateTimeAdapter);
     }
 
     private void updateStatus(final String status) {
@@ -166,6 +174,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
         }
         updateStatus("EMDK closed unexpectedly! Please close and restart the application.");
     }
+
 
     @Override
     protected void onDestroy() {
@@ -288,7 +297,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                                 String xqr230b_09 = jsonObject.getString("QR_IMN07"); //Nguoi quet
                                 Integer xqr230b_10 = Integer.valueOf(jsonObject.getString("QR_IMN06")); //Số lượng
 
-                                dsCheckDTS.add(new CheckDT_List(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10));
+                                dsCheckDTS.add(new List_CheckDT(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10));
 
                                 //trangthai.setText("Chưa chuyển");
 
@@ -391,7 +400,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                                 String xqr230b_09 = jsonObject.getString("QR_IMN07"); //Nguoi quet
                                 Integer xqr230b_10 = Integer.valueOf(jsonObject.getString("QR_IMN06")); //Số lượng
 
-                                dsCheckDTS.add(new CheckDT_List(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10));
+                                dsCheckDTS.add(new List_CheckDT(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10));
 
                                 //trangthai.setText("Chưa chuyển");
 
@@ -479,7 +488,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
         }
     }
 
-    /*private void updatedetail(String datastr) {
+    private void updatedetail(String datastr) {
         try {
             if (datastr.startsWith("new")) {
                 String qr01 = "", qr02 = "";
@@ -672,24 +681,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                         builder.show();
                     }
                 });
-            } else if (result.equals("SAISOLO")) {
-                CheckDateTime.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(CheckDateTime.this);
-                        builder.setTitle("ERROR");
-                        builder.setMessage(getString(R.string.qr210_msg05));
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                        builder.show();
-                    }
-                });
-            }
-            else {
+            } else {
                 uiHandler.sendEmptyMessage(2);
             }
         } catch (Exception e) {
@@ -720,7 +712,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
         } catch (Exception e) {
             return "NULL";
         }
-    }*/
+    }
 
     @Override
     public void onStatus(StatusData statusData) {
@@ -847,7 +839,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                     }
                 });
 
-                lv_checkdate.setAdapter(adapter);
+                list01.setAdapter(adapter);
             }
         } catch (Exception e) {
             String x = e.toString();

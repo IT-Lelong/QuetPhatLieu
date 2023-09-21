@@ -12,11 +12,11 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-public class CheckDT_Adapter extends ArrayAdapter<CheckDT_List> {
+public class CheckDT_Adapter extends ArrayAdapter<List_CheckDT> {
 
     private final Context context;
     private final int resource;
-    private final List<CheckDT_List> objects;
+    private final List<List_CheckDT> objects;
 
     @NonNull
     @Override
@@ -45,25 +45,25 @@ public class CheckDT_Adapter extends ArrayAdapter<CheckDT_List> {
         }
 
         //Trả về danh bạ hiện tại muốn vẽ
-        CheckDT_List _checkDTList =this.objects.get(position);
+        List_CheckDT list_checkDT=this.objects.get(position);
 
-        holder.stt.setText(_checkDTList.getXqr230b_01().toString());
-        holder.maphieudk.setText(_checkDTList.getXqr230b_02());
-        holder.hm.setText(_checkDTList.getXqr230b_03().toString());
-        holder.soluong.setText(_checkDTList.getXqr230b_10().toString());
-        holder.mavl.setText(_checkDTList.getXqr230b_05());
-        holder.tenvl.setText(_checkDTList.getXqr230b_06());
-        holder.quycach.setText(_checkDTList.getXqr230b_07());
-        holder.manv.setText(_checkDTList.getXqr230b_09());
-        holder.gio.setText(_checkDTList.getXqr230b_08());
-        holder.matem.setText(_checkDTList.getXqr230b_04());
+        holder.stt.setText(list_checkDT.getXqr230b_01().toString());
+        holder.maphieudk.setText(list_checkDT.getXqr230b_02());
+        holder.hm.setText(list_checkDT.getXqr230b_03().toString());
+        holder.soluong.setText(list_checkDT.getXqr230b_10().toString());
+        holder.mavl.setText(list_checkDT.getXqr230b_05());
+        holder.tenvl.setText(list_checkDT.getXqr230b_06());
+        holder.quycach.setText(list_checkDT.getXqr230b_07());
+        holder.manv.setText(list_checkDT.getXqr230b_09());
+        holder.gio.setText(list_checkDT.getXqr230b_08());
+        holder.matem.setText(list_checkDT.getXqr230b_04());
 
         return convertView;
     }
     public class ViewHolder {
         TextView stt,maphieudk,hm,soluong,mavl,tenvl,quycach,manv,gio,matem;
     }
-    public CheckDT_Adapter(@NonNull Context context, int resource, @NonNull List<CheckDT_List> objects) {
+    public CheckDT_Adapter(@NonNull Context context, int resource, @NonNull List<List_CheckDT> objects) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
@@ -72,7 +72,7 @@ public class CheckDT_Adapter extends ArrayAdapter<CheckDT_List> {
 
     @Nullable
     @Override
-    public CheckDT_List getItem(int position) {
+    public List_CheckDT getItem(int position) {
         return super.getItem(position);
     }
 }
