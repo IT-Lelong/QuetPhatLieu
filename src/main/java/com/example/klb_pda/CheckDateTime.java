@@ -479,7 +479,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
         }
     }
 
-    private void updatedetail(String datastr) {
+    /*private void updatedetail(String datastr) {
         try {
             if (datastr.startsWith("new")) {
                 String qr01 = "", qr02 = "";
@@ -672,7 +672,24 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                         builder.show();
                     }
                 });
-            } else {
+            } else if (result.equals("SAISOLO")) {
+                CheckDateTime.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CheckDateTime.this);
+                        builder.setTitle("ERROR");
+                        builder.setMessage(getString(R.string.qr210_msg05));
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        builder.show();
+                    }
+                });
+            }
+            else {
                 uiHandler.sendEmptyMessage(2);
             }
         } catch (Exception e) {
@@ -703,7 +720,7 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
         } catch (Exception e) {
             return "NULL";
         }
-    }
+    }*/
 
     @Override
     public void onStatus(StatusData statusData) {

@@ -3,7 +3,7 @@ package com.example.klb_pda;
 public class Constant_Class {
     public static final String UpdateName = "PDA_PHATHANG";
     public static final String Update_serverAPK = "PDA_PhatHang.apk";
-    public static final String Package_Name = "com.example.klb_pda";
+    //public static final String Package_Name = "com.example.klb_pda";
     public static final String server = "PHP";
 
     public static String androidID = "";

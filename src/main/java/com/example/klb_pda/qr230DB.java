@@ -154,12 +154,17 @@ public class qr230DB {
     public String scan(String xqr230b_02, String xqr230b_03, String xqr230b_04, Double xqr230b_05, String xqr230b_06, String xqr230b_07) {
         try {
             //確認是否有此品號
-            //if (!xqr230b_04.equals("NULL")) {
-            Cursor c_soloDonDK = db.rawQuery("SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " WHERE qr230_02='" + xqr230b_03 + "'  AND qr230_09 ='" + xqr230b_04 + "' ORDER BY qr230_01", null);
+            if (xqr230b_04.equals("NULL")) {
+                xqr230b_04=" ";
+            }
+            Cursor c_soloDonDK = db.rawQuery(" SELECT COUNT(qr230_02) count FROM " + TABLE_NAME + " " +
+                    " WHERE qr230_02='" + xqr230b_03 + "' " +
+                    " AND qr230_09 ='" + xqr230b_04 + "' " +
+                    " ORDER BY qr230_01", null);
             c_soloDonDK.moveToFirst();
             Integer solo_count = c_soloDonDK.getInt(0);
             c_soloDonDK.close();
-            if (solo_count > 0) {
+            if (solo_count == 0) {
                 return "SAISOLO";
             }
             //}

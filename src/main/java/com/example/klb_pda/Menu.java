@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.klb_pda.QRprint.qrcode_print;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -33,7 +38,7 @@ public class Menu extends AppCompatActivity {
         actionBar.hide();
 
         Bundle getbundle = getIntent().getExtras();
-        ID = Constant_Class.UserID;
+        ID = getbundle.getString("ID"); //mặc định
         g_server = Constant_Class.server;
         btnQR210 = (Button) findViewById(R.id.btnQR210);
         btnQR230 = (Button) findViewById(R.id.btnQR230);
@@ -41,14 +46,14 @@ public class Menu extends AppCompatActivity {
         btnprint = (Button) findViewById(R.id.btnprint);
         btnquery = (Button) findViewById(R.id.btnquery);
 
-
         btnQR210.setOnClickListener(btnlistener);
         btnQR230.setOnClickListener(btnlistener);
         btnprint.setOnClickListener(btnlistener);
         btnquery.setOnClickListener(btnlistener);
 
 
-        getIDname("http://172.16.40.20/" + g_server + "/getid.php?ID=" + ID);
+        //getIDname("http://172.16.40.20/" + g_server + "/getid.php?ID=" + ID);
+        new IDname().execute("http://172.16.40.20/" + Constant_Class.server + "/getidJson.php?ID=" + ID);
     }
 
     @Override
@@ -58,7 +63,7 @@ public class Menu extends AppCompatActivity {
         checkAppUpdate.checkVersion();
     }
 
-    private void getIDname(String apiUrl) {
+    /*private void getIDname(String apiUrl) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -84,6 +89,64 @@ public class Menu extends AppCompatActivity {
                 }
             }
         }).start();
+    }*/
+
+    //取得登入者姓名
+    private class IDname extends AsyncTask<String, Integer, String> {
+        String result = "";
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.connect();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                result = reader.readLine();
+                reader.close();
+            } catch (Exception e) {
+                result = "";
+            } finally {
+                return result;
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+
+        }
+
+        protected void onPostExecute(String result) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(!result.equals("FALSE")){
+                        try{
+                            JSONArray jsonarray = new JSONArray(result);
+                            for (int i = 0; i < jsonarray.length(); i++) {
+                                JSONObject jsonObject = jsonarray.getJSONObject(i);
+                                menuID.setText(ID + " " + jsonObject.getString("TA_CPF001") + "\n" + jsonObject.getString("GEM02") );
+                                Constant_Class.UserID = ID;
+                                Constant_Class.UserName_zh = jsonObject.getString("CPF02");
+                                Constant_Class.UserName_vn = jsonObject.getString("TA_CPF001");
+                                Constant_Class.UserDepID = jsonObject.getString("CPF29");
+                                Constant_Class.UserDepName = jsonObject.getString("GEM02");
+                                Constant_Class.UserFactory = jsonObject.getString("CPF281");
+                            }
+                        } catch (JSONException e) {
+                            Toast alert = Toast.makeText(Menu.this, e.toString(), Toast.LENGTH_LONG);
+                            alert.show();
+                        }
+                    }
+
+                }
+            });
+        }
     }
 
     private View.OnClickListener btnlistener = new View.OnClickListener() {

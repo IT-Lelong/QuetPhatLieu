@@ -87,6 +87,7 @@
     <string name="qr230_msg01">調撥單查詢失敗</string>
     <string name="qr230_msg02">此調撥單無需掃描</string>
     <string name="qr230_msg03">無此筆資料</string>
+    <string name="qr230_msg04">批號不符合，請再確認</string>
 
     \*qrcode_print *\
     <string name="btnQRcodePrint">標籤列印</string>

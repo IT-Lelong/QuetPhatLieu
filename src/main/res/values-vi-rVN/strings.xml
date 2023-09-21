@@ -87,6 +87,7 @@
     <string name="qr230_msg01">Tra cứu phiếu điều kho thất bại</string>
     <string name="qr230_msg02">Phiếu điều kho này không cần quét</string>
     <string name="qr230_msg03">Không có dữ liệu điều kho</string>
+    <string name="qr230_msg04">Số lô không phù hợp, hãy xác nhận lại hàng hóa</string>
 
     \*qrcode_print *\
     <string name="btnQRcodePrint">In tách tem</string>

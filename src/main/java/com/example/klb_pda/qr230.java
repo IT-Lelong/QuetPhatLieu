@@ -53,7 +53,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
     private EMDKManager emdkManager = null;
     private BarcodeManager barcodeManager = null;
     private Scanner scanner = null;
-    String ID, g_server,l_ngay;
+    String ID, g_server, l_ngay;
     TextView head1;
     ListView list01;
     Button btnupload, btnclear;
@@ -65,6 +65,13 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
     private CheckAppUpdate checkAppUpdate = null;
     DecimalFormat decimalFormat;
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        db.close();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -395,7 +402,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                     qr03 = Double.valueOf(datastr.substring(index3 + 1));
                 }
 
-                scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
+                scan(datastr, qr01, qr02, qr03, String.valueOf(dateFormat.format(new Date()).toString()), ID);
 
             } else if (datastr.substring(0, 5).equals("BC525") || datastr.substring(0, 5).equals("BC527") || datastr.substring(0, 5).equals("BB525") || datastr.substring(0, 5).equals("BB527")) {
                 Thread api = new Thread(new Runnable() {
@@ -421,7 +428,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                             //取得數量
                             qr03 = Double.valueOf(datastr.substring(index3 + 1));
                         }
-                        scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
+                        scan(datastr, qr01, qr02, qr03, String.valueOf(dateFormat.format(new Date()).toString()), ID);
                     }
                 });
                 api.start();
@@ -474,7 +481,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                             qr03 = Double.valueOf(datastr.substring(index1 + 1, index2));
                         }
 
-                        scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
+                        scan(datastr, qr01, qr02, qr03, String.valueOf(dateFormat.format(new Date()).toString()), ID);
                     }
                 });
                 api.start();
@@ -490,7 +497,7 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                 String qr02 = datastr.substring(index3 + 1, index4);
                 //取得數量
                 Double qr03 = Double.valueOf(datastr.substring(index4 + 1));
-                scan(datastr, qr01, qr02, qr03,String.valueOf(dateFormat.format(new Date()).toString()),ID);
+                scan(datastr, qr01, qr02, qr03, String.valueOf(dateFormat.format(new Date()).toString()), ID);
             } else {
                 qr230.this.runOnUiThread(new Runnable() {
                     @Override
@@ -556,6 +563,22 @@ public class qr230 extends AppCompatActivity implements EMDKManager.EMDKListener
                         AlertDialog.Builder builder = new AlertDialog.Builder(qr230.this);
                         builder.setTitle("ERROR");
                         builder.setMessage(getString(R.string.qr210_msg05));
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        builder.show();
+                    }
+                });
+            } else if (result.equals("SAISOLO")) {
+                qr230.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(qr230.this);
+                        builder.setTitle("ERROR");
+                        builder.setMessage(getString(R.string.qr230_msg04));
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
