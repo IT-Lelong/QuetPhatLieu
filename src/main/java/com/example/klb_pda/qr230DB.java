@@ -37,6 +37,8 @@ public class qr230DB {
     String qr230b_07 = "qr230b_07"; //明細項目
     String qr230b_08 = "qr230b_08"; //Ngay quet
     String qr230b_09 = "qr230b_09"; //Nguoi quet
+    String qr230b_10 = "qr230b_10"; //Ngay nhan
+    String qr230b_11 = "qr230b_11"; //Nguoi nhan
 
     /*String TABLE_NAME_QR = "qr230qr_table";
     String qr230qr_01 = "qr230qr_01"; //stt
@@ -56,7 +58,7 @@ public class qr230DB {
             qr230_10 + " TEXT," + qr230_11 + " TEXT," + qr230_12 + " TEXT," + " PRIMARY KEY(qr230_01))";
 
     String CREATE_TABLE2 = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME2 + " (" + qr230b_01 + " INTEGER," + qr230b_02 + " TEXT," + qr230b_03 + " TEXT," +
-            qr230b_04 + " TEXT," + qr230b_05 + " DOUBLE," + qr230b_06 + " TEXT," + qr230b_07 + " INTEGER," + qr230b_08 + " TEXT," + qr230b_09 + " TEXT)";
+            qr230b_04 + " TEXT," + qr230b_05 + " DOUBLE," + qr230b_06 + " TEXT," + qr230b_07 + " INTEGER," + qr230b_08 + " TEXT," + qr230b_09 + " TEXT," + qr230b_10 + " TEXT," + qr230b_11 + " TEXT)";
 
     private Context mCtx = null;
 
@@ -130,6 +132,11 @@ public class qr230DB {
                 Integer xqr230b_07 = data.getInt("QR_IMN09");
                 String xqr230b_08 = data.getString("QR_IMN12");
                 String xqr230b_09 = data.getString("QR_IMN07");
+                String xqr230b_10 = data.getString("QR_IMN13");
+                String xqr230b_11 = data.getString("QR_IMN11");
+                if (xqr230b_10.equals("null")){
+                    xqr230b_10="";
+                }
                 ContentValues args = new ContentValues();
 
                 args.put(qr230b_01, xqr230b_01);
@@ -141,6 +148,8 @@ public class qr230DB {
                 args.put(qr230b_07, xqr230b_07);
                 args.put(qr230b_08, xqr230b_08);
                 args.put(qr230b_09, xqr230b_09);
+                args.put(qr230b_10, xqr230b_10);
+                args.put(qr230b_11, xqr230b_11);
                 db.insert(TABLE_NAME2, null, args);
             }
             return "TRUE";
