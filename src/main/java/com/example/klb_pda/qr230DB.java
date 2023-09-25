@@ -134,8 +134,11 @@ public class qr230DB {
                 String xqr230b_09 = data.getString("QR_IMN07");
                 String xqr230b_10 = data.getString("QR_IMN13");
                 String xqr230b_11 = data.getString("QR_IMN11");
-                if (xqr230b_10.equals("null")){
+                if (xqr230b_10.equals("NULL")){
                     xqr230b_10="";
+                }
+                if (xqr230b_11.equals("NULL")){
+                    xqr230b_11="";
                 }
                 ContentValues args = new ContentValues();
 
@@ -213,8 +216,8 @@ public class qr230DB {
                     //取得最大的明細項目(E)
 
                     db.execSQL("UPDATE " + TABLE_NAME + " SET qr230_05=qr230_05+" + xqr230b_05 + " WHERE qr230_01=" + tqr230_01);
-                    db.execSQL("INSERT INTO " + TABLE_NAME2 + " (qr230b_01,qr230b_02,qr230b_03,qr230b_04,qr230b_05,qr230b_06,qr230b_07,qr230b_08,qr230b_09) " +
-                            "VALUES(" + tqr230_01 + ",'" + xqr230b_02 + "','" + xqr230b_03 + "','" + xqr230b_04 + "'," + xqr230b_05 + ",'false','" + g_qr230b_07 + "','" + xqr230b_06 + "','" + xqr230b_07 + "')");
+                    db.execSQL("INSERT INTO " + TABLE_NAME2 + " (qr230b_01,qr230b_02,qr230b_03,qr230b_04,qr230b_05,qr230b_06,qr230b_07,qr230b_08,qr230b_09,qr230b_10,qr230b_11) " +
+                            "VALUES(" + tqr230_01 + ",'" + xqr230b_02 + "','" + xqr230b_03 + "','" + xqr230b_04 + "'," + xqr230b_05 + ",'false','" + g_qr230b_07 + "','" + xqr230b_06 + "','" + xqr230b_07 + "',' ',' ')");
 
                     return "TRUE";
                 } else {

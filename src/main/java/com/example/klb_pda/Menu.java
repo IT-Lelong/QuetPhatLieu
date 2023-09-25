@@ -216,18 +216,6 @@ public class Menu extends AppCompatActivity {
 
                     break;
                 }
-                /*case R.id.btnquery: {
-                    try {
-                        Intent QR230 = new Intent();
-                        QR230.setClass(Menu.this, CheckDateTime.class);
-                        startActivity(QR230);
-                    } catch (Exception e) {
-                        Toast alert = Toast.makeText(Menu.this, e.toString(), Toast.LENGTH_LONG);
-                        alert.show();
-                    }
-
-                    break;
-                }*/
             }
         }
     };
