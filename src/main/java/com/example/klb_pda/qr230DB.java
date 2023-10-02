@@ -31,7 +31,7 @@ public class qr230DB {
     String qr230b_01 = "qr230b_01"; //項次
     String qr230b_02 = "qr230b_02"; //QRcode
     String qr230b_03 = "qr230b_03"; //料號
-    String qr230b_04 = "qr230b_04"; //批號
+    String qr230b_04 = "qr230b_04"; //批號solo
     String qr230b_05 = "qr230b_05"; //數量
     String qr230b_06 = "qr230b_06"; //驗收狀況
     String qr230b_07 = "qr230b_07"; //明細項目
@@ -91,7 +91,7 @@ public class qr230DB {
         }
     }
 
-    public String append(JSONObject result) {
+    public String  append(JSONObject result) {
         try {
             JSONArray jarray1 = result.getJSONArray("detail1");
             JSONArray jarray2 = result.getJSONArray("detail2");
@@ -188,7 +188,9 @@ public class qr230DB {
             if (tcount > 0) {
                 //檢查掃描數量是否超過
                 Cursor c1 = db.rawQuery(" SELECT qr230_01,qr230_04,qr230_05 FROM " + TABLE_NAME +
-                                " WHERE qr230_02='" + xqr230b_03 + "' AND qr230_04 > qr230_05 AND qr230_04 - qr230_05 >= " + xqr230b_05 + " ORDER BY qr230_01",
+                                " WHERE qr230_02='" + xqr230b_03 + "' " +
+                                " AND qr230_04 > qr230_05 AND qr230_04 - qr230_05 >= " + xqr230b_05 + " " +
+                                " AND qr230_09 = '" + xqr230b_04 + "' ORDER BY qr230_01",
                         null);
 
                 if (c1.getCount() == 0) {
