@@ -296,8 +296,9 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                                 String xqr230b_08 = jsonObject.getString("QR_IMN12"); //Ngay quet
                                 String xqr230b_09 = jsonObject.getString("QR_IMN07"); //Nguoi quet
                                 Integer xqr230b_10 = Integer.valueOf(jsonObject.getString("QR_IMN06")); //Số lượng
+                                String xqr230b_11 = jsonObject.getString("RVB38"); //Nguoi quet
 
-                                dsCheckDTS.add(new List_CheckDT(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10));
+                                dsCheckDTS.add(new List_CheckDT(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10,xqr230b_11));
 
                                 //trangthai.setText("Chưa chuyển");
 
@@ -399,8 +400,10 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
                                 String xqr230b_08 = jsonObject.getString("QR_IMN12"); //Ngay quet
                                 String xqr230b_09 = jsonObject.getString("QR_IMN07"); //Nguoi quet
                                 Integer xqr230b_10 = Integer.valueOf(jsonObject.getString("QR_IMN06")); //Số lượng
+                                String xqr230b_11 = jsonObject.getString("RVB38"); //Nguoi quet
 
-                                dsCheckDTS.add(new List_CheckDT(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10));
+
+                                dsCheckDTS.add(new List_CheckDT(xqr230b_01, xqr230b_02, xqr230b_03, xqr230b_04, xqr230b_05, xqr230b_06, xqr230b_07, xqr230b_08, xqr230b_09, xqr230b_10,xqr230b_11));
 
                                 //trangthai.setText("Chưa chuyển");
 
@@ -461,7 +464,6 @@ public class CheckDateTime extends AppCompatActivity implements EMDKManager.EMDK
             reader.close();
             return result;
         } catch (Exception e) {
-
             return "FALSE";
         }
     }

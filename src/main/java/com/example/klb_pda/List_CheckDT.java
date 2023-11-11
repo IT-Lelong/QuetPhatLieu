@@ -20,6 +20,7 @@ public class List_CheckDT  implements Serializable  {
     private final String xqr230b_08;
     private final Integer xqr230b_10;
     private Integer xqr230b_01;
+    private final String xqr230b_11;
 
     public String getXqr230b_02() {
         return xqr230b_02;
@@ -69,8 +70,12 @@ public class List_CheckDT  implements Serializable  {
         return xqr230b_09;
     }
 
+    public String getXqr230b_11() {
+        return xqr230b_11;
+    }
+
     public List_CheckDT(Integer xqr230b_01, String xqr230b_02, Integer xqr230b_03, String xqr230b_04,
-                        String xqr230b_05, String xqr230b_06, String xqr230b_07, String xqr230b_08, String xqr230b_09, Integer xqr230b_10) {
+                        String xqr230b_05, String xqr230b_06, String xqr230b_07, String xqr230b_08, String xqr230b_09, Integer xqr230b_10, String xqr230b_11) {
         this.xqr230b_01=xqr230b_01;
         this.xqr230b_02=xqr230b_02;
         this.xqr230b_03=xqr230b_03;
@@ -81,6 +86,7 @@ public class List_CheckDT  implements Serializable  {
         this.xqr230b_08 = xqr230b_08;
         this.xqr230b_09 = xqr230b_09;
         this.xqr230b_10 = xqr230b_10;
+        this.xqr230b_11 = xqr230b_11;
     }
 
 }

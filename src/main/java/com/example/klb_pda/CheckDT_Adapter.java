@@ -25,7 +25,7 @@ public class CheckDT_Adapter extends ArrayAdapter<List_CheckDT> {
         if (convertView == null) {
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(this.resource,null);
+            convertView = inflater.inflate(this.resource, null);
 
             //ánh xạ và setTag lưu vào holder
             holder.stt = convertView.findViewById(R.id.stt);
@@ -38,14 +38,14 @@ public class CheckDT_Adapter extends ArrayAdapter<List_CheckDT> {
             holder.manv = convertView.findViewById(R.id.manv);
             holder.gio = convertView.findViewById(R.id.gio);
             holder.matem = convertView.findViewById(R.id.matem);
-
+            holder.solo = convertView.findViewById(R.id.solo);
             convertView.setTag(holder);
-        }else {
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         //Trả về danh bạ hiện tại muốn vẽ
-        List_CheckDT list_checkDT=this.objects.get(position);
+        List_CheckDT list_checkDT = this.objects.get(position);
 
         holder.stt.setText(list_checkDT.getXqr230b_01().toString());
         holder.maphieudk.setText(list_checkDT.getXqr230b_02());
@@ -57,12 +57,15 @@ public class CheckDT_Adapter extends ArrayAdapter<List_CheckDT> {
         holder.manv.setText(list_checkDT.getXqr230b_09());
         holder.gio.setText(list_checkDT.getXqr230b_08());
         holder.matem.setText(list_checkDT.getXqr230b_04());
+        holder.solo.setText(list_checkDT.getXqr230b_11());
 
         return convertView;
     }
+
     public class ViewHolder {
-        TextView stt,maphieudk,hm,soluong,mavl,tenvl,quycach,manv,gio,matem;
+        TextView stt, maphieudk, hm, soluong, mavl, tenvl, quycach, manv, gio, matem, solo;
     }
+
     public CheckDT_Adapter(@NonNull Context context, int resource, @NonNull List<List_CheckDT> objects) {
         super(context, resource, objects);
         this.context = context;
